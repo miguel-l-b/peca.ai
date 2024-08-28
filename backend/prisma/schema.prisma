@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Country {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Brand     Brand[]
+}
+
+model Brand {
+  id        Int       @id @default(autoincrement())
+  name      String
+  imageUrl  String
+  country   Country   @relation(fields: [countryId], references: [id])
+  countryId Int
+  foundedAt DateTime
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Vehicle   Vehicle[]
+  Part      Part[]
+}
+
+model vehicleType {
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Vehicle   Vehicle[]
+}
+
+model Part {
+  id          BigInt        @id @default(autoincrement())
+  name        String
+  barcode     String        @unique
+  price       Float
+  stock       Int
+  imageUrl    String
+  brand       Brand         @relation(fields: [brandId], references: [id])
+  brandId     Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  PartVehicle PartVehicle[]
+}
+
+model PartVehicle {
+  id        BigInt   @id @default(autoincrement())
+  part      Part     @relation(fields: [partId], references: [id])
+  partId    BigInt
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  vehicleId BigInt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Vehicle {
+  id            BigInt        @id @default(autoincrement())
+  name          String
+  brand         Brand         @relation(fields: [brandId], references: [id])
+  brandId       Int
+  vehicleType   vehicleType   @relation(fields: [vehicleTypeId], references: [id])
+  vehicleTypeId Int
+  year          Int
+  fabricatedAt  DateTime
+  imageUrl      String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  PartVehicle   PartVehicle[]
+}
