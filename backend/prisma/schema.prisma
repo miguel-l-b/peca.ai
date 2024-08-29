@@ -14,10 +14,12 @@ datasource db {
 }
 
 model Country {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  deleted   Boolean   @default(false)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   Brand     Brand[]
 }
 
@@ -28,6 +30,8 @@ model Brand {
   country   Country   @relation(fields: [countryId], references: [id])
   countryId Int
   foundedAt DateTime
+  deleted   Boolean   @default(false)
+  deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   Vehicle   Vehicle[]
@@ -37,6 +41,8 @@ model Brand {
 model vehicleType {
   id        Int       @id @default(autoincrement())
   name      String
+  deleted   Boolean   @default(false)
+  deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   Vehicle   Vehicle[]
@@ -47,23 +53,27 @@ model Part {
   name        String
   barcode     String        @unique
   price       Float
-  stock       Int
+  stock       Int?
   imageUrl    String
   brand       Brand         @relation(fields: [brandId], references: [id])
   brandId     Int
+  deleted     Boolean       @default(false)
+  deletedAt   DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   PartVehicle PartVehicle[]
 }
 
 model PartVehicle {
-  id        BigInt   @id @default(autoincrement())
-  part      Part     @relation(fields: [partId], references: [id])
+  id        BigInt    @id @default(autoincrement())
+  part      Part      @relation(fields: [partId], references: [id])
   partId    BigInt
-  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  vehicle   Vehicle   @relation(fields: [vehicleId], references: [id])
   vehicleId BigInt
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  deleted   Boolean   @default(false)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Vehicle {
@@ -76,6 +86,8 @@ model Vehicle {
   year          Int
   fabricatedAt  DateTime
   imageUrl      String
+  deleted       Boolean       @default(false)
+  deletedAt     DateTime?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   PartVehicle   PartVehicle[]
