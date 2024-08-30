@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { TVehicleCreate, TVehicleSort, TVehicleUpdate, VehicleCreateSchema, VehicleUpdateSchema } from "../entities/vehicle";
+import { TVehicleCreate, TVehicleFilter, TVehicleFindById, TVehicleSort, TVehicleUpdate, VehicleCreateSchema, VehicleUpdateSchema } from "../entities/vehicle";
 
 const db = new PrismaClient();
 
@@ -35,7 +35,11 @@ export default class VehicleController {
             return false;
 
         const vehicleTypeId = await this.getVehicleTypeOrCreate(vehicle.vehicleType);
-        if (!vehicleTypeId)
+        if (vehicleTypeId === null)
+            return false;
+
+        const existVehicle = await db.vehicle.findFirst({ where: { name: vehicle.name, year: vehicle.year, deleted: false } });
+        if (existVehicle !== null)
             return false;
 
         return await db.vehicle.create({
@@ -43,20 +47,31 @@ export default class VehicleController {
                 name: vehicle.name,
                 year: vehicle.year,
                 vehicleTypeId: vehicleTypeId,
-                fabricatedAt: vehicle.fabricatedAt,
                 imageUrl: vehicle.imageUrl,
                 brandId: vehicle.brandId,
             }
         })
             .then(() => true)
-            .catch(() => false);
+            .catch((e) => {
+                console.log(e);
+                return false;
+            });
     }
 
-    public static async getVehicleById(id: number) {
-        return await db.vehicle.findUnique({ where: { id }, include: { brand: true, vehicleType: true } });
+    public static async getVehicleById(vehicleId: TVehicleFindById) {
+        if (!VehicleCreateSchema.safeParse(vehicleId).success)
+            return null;
+
+        if (await db.vehicle.findFirst({ where: { id: vehicleId.id, deleted: false } }) === null)
+            return null;
+
+        return await db.vehicle.findUnique({ where: { id: vehicleId.id }, include: { brand: true, vehicleType: true } });
     }
 
-    public static async getVehicles(settings: { sort: TVehicleSort, skip?: number, offset?: number }) {
+    public static async getVehicles(settings: TVehicleFilter) {
+        if (!VehicleCreateSchema.safeParse(settings).success)
+            return null;
+
         return await db.vehicle.findMany({
             include: { brand: true, vehicleType: true },
             orderBy: { [settings.sort.field]: settings.sort.order },
@@ -65,8 +80,21 @@ export default class VehicleController {
         });
     }
 
+    public static async getPartsByVehicleId(vehicleId: TVehicleFindById) {
+        if (!VehicleCreateSchema.safeParse(vehicleId).success)
+            return null;
+
+        if (await db.vehicle.findFirst({ where: { id: vehicleId.id, deleted: false } }) === null)
+            return null;
+
+        return await db.part.findMany({ where: { PartVehicle: { every: { vehicleId: vehicleId.id, AND: { part: { deleted: false } } } } } });
+    }
+
     public static async updateVehicle(vehicle: TVehicleUpdate): Promise<boolean> {
         if (!VehicleUpdateSchema.safeParse(vehicle).success)
+            return false;
+
+        if (await db.vehicle.findFirst({ where: { id: vehicle.id, deleted: false } }) === null)
             return false;
 
         return await db.vehicle.update({
@@ -74,7 +102,6 @@ export default class VehicleController {
             data: {
                 name: vehicle.name,
                 year: vehicle.year,
-                fabricatedAt: vehicle.fabricatedAt,
                 imageUrl: vehicle.imageUrl,
             }
         })
@@ -82,8 +109,11 @@ export default class VehicleController {
             .catch(() => false);
     }
 
-    public static async deleteVehicle(id: number): Promise<boolean> {
-        return await db.vehicle.update({ where: { id }, data: { deleted: true, deletedAt: new Date() } })
+    public static async deleteVehicle(vehicleId: TVehicleFindById): Promise<boolean> {
+        if (!VehicleCreateSchema.safeParse(vehicleId).success)
+            return false;
+
+        return await db.vehicle.update({ where: { id: vehicleId.id }, data: { deleted: true, deletedAt: new Date() } })
             .then(() => true)
             .catch(() => false);
     }

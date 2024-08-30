@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { PartCreateSchema, PartSortSchema, PartUpdateSchema, TPartCreate, TPartSort, TPartUpdate } from "../entities/part";
+import { PartCreateSchema, PartFilterSchema, PartFindByIdSchema, PartSortSchema, PartUpdateSchema, TPartCreate, TPartFilter, TPartFindById, TPartSort, TPartUpdate } from "../entities/part";
 
 const db = new PrismaClient();
 
@@ -18,19 +18,37 @@ export default class PartController {
             }
         })
             .then(() => true)
-            .catch(() => false);
+            .catch((e) => {
+                console.error(e);
+                return false;
+            });
     }
 
-    public static async getPartById(id: number) {
-        return await db.part.findUnique({ where: { id }, include: { brand: true } });
+    public static async getPartById(PartId: TPartFindById) {
+        if (!PartFindByIdSchema.safeParse(PartId).success)
+            return null;
+
+        return await db.part.findUnique({ where: { id: PartId.id, deleted: false }, include: { brand: true } });
     }
 
-    public static async getParts(settings: { sort: TPartSort, skip?: number, offset?: number }) {
-        if (!PartSortSchema.safeParse(settings.sort).success)
+    public static async getVehiclesById(PartId: TPartFindById) {
+        if (!PartFindByIdSchema.safeParse(PartId).success)
+            return null;
+
+        const part = await db.part.findUnique({ where: { id: PartId.id, deleted: false } });
+        if (!part || part.deleted)
+            return null;
+
+        return await db.vehicle.findMany({ where: { PartVehicle: { every: { partId: PartId.id, AND: { vehicle: { deleted: false } } } } } });
+    }
+
+    public static async getParts(settings: TPartFilter) {
+        if (!PartFilterSchema.safeParse(settings).success)
             return null;
 
         return await db.part.findMany({
             include: { brand: true },
+            where: { deleted: false },
             orderBy: { [settings.sort.field]: settings.sort.order },
             skip: settings.skip,
             take: settings.offset
@@ -54,8 +72,8 @@ export default class PartController {
             .catch(() => false);
     }
 
-    public static async deletePart(id: number): Promise<boolean> {
-        return await db.part.update({ where: { id }, data: { deleted: true, deletedAt: new Date() } })
+    public static async deletePart(partId: TPartFindById): Promise<boolean> {
+        return await db.part.update({ where: { id: partId.id }, data: { deleted: true, deletedAt: new Date() } })
             .then(() => true)
             .catch(() => false);
     }
