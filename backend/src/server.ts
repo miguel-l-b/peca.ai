@@ -14,6 +14,10 @@ app.use('/brand', brandRouter);
 app.use('/vehicle', vehicleRouter);
 app.use('/part', partRouter);
 
+app.use((req, res) => {
+    res.status(404).json({ message: 'Not found' });
+});
+
 app.listen(3030, () => {
     console.log('Server running on port 3030');
 })
