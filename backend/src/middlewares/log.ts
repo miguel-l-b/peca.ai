@@ -2,9 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 
 export class LogMiddleware {
     public static handle(req: Request, res: Response, next: NextFunction) {
-        const date = new Date().toLocaleString();
-        console.time(`[${date}] (${req.method}) - ${req.path} finished in`);
+        const date = new Date()
         next();
-        console.timeEnd(`[${date}] (${req.method}) - ${req.path} finished in`);
+        console.log(`[${date}] (${req.method}) - ${req.path} finished in: ${Date.now() - date.getTime()}ms`);
     }
 }
