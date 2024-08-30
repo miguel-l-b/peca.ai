@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { VehicleCreateSchema, VehicleFilterSchema, VehicleFindByIdSchema, VehicleSchema, VehicleUpdateSchema } from '../entities/vehicle';
 import VehicleController from '../controllers/vehicle';
+import BigIntHelper from '../helpers/bigint';
 
 const vehicleRouter = Router();
 
@@ -24,7 +25,7 @@ vehicleRouter.get('/find', async (req, res) => {
 
     if (reqObject.success) {
         const vehicles = await VehicleController.getVehicles(reqObject.data);
-        return res.json(vehicles);
+        return res.json(vehicles?.map(BigIntHelper.convertBigIntToString));
     }
 
     return res.status(400).json({ message: 'Invalid data' });
@@ -36,7 +37,7 @@ vehicleRouter.get('/find/:id', async (req, res) => {
     if (reqObject.success) {
         const vehicle = await VehicleController.getVehicleById(reqObject.data);
         if (vehicle)
-            return res.json(vehicle);
+            return res.json(BigIntHelper.convertBigIntToString(vehicle));
 
         return res.status(404).json({ message: 'Vehicle not found' });
     }
@@ -49,7 +50,7 @@ vehicleRouter.get('/:id/parts', async (req, res) => {
 
     if (reqObject.success) {
         const parts = await VehicleController.getPartsByVehicleId(reqObject.data);
-        return res.json(parts);
+        return res.json(parts?.map(BigIntHelper.convertBigIntToString));
     }
 
     return res.status(400).json({ message: 'Invalid data' });

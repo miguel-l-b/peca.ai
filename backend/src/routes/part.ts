@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import PartController from '../controllers/part';
-import { PartCreateSchema, PartFilterSchema, PartFindByIdSchema, PartSchema, PartUpdateSchema } from '../entities/part';
-import convertBigIntToString from '../utils/convertIdToString';
+import { PartCreateSchema, PartFilterSchema, PartFindByIdSchema, PartUpdateSchema } from '../entities/part';
+import BigIntHelper from '../helpers/bigint';
 
 const partRouter = Router();
 
@@ -23,7 +23,7 @@ partRouter.get('/find', async (req, res) => {
     const reqObject = PartFilterSchema.safeParse({ sort: { field: sort, order }, skip, offset });
     if (reqObject.success) {
         const parts = await PartController.getParts(reqObject.data);
-        return res.json(parts?.map(convertBigIntToString));
+        return res.json(parts?.map(BigIntHelper.convertBigIntToString));
     }
 
     return res.status(400).json({ message: 'Invalid data' });
@@ -34,7 +34,7 @@ partRouter.get('/find/:id', async (req, res) => {
     if (reqObject.success) {
         const part = await PartController.getPartById(reqObject.data);
         if (part)
-            return res.json(convertBigIntToString(part));
+            return res.json(BigIntHelper.convertBigIntToString(part));
 
         return res.status(404).json({ message: 'Part not found' });
     }
@@ -47,7 +47,7 @@ partRouter.get('/:id/vehicles', async (req, res) => {
     if (reqObject.success) {
         const part = await PartController.getVehiclesById(reqObject.data);
         if (part)
-            return res.json(part.map(convertBigIntToString));
+            return res.json(part.map(BigIntHelper.convertBigIntToString));
 
         return res.status(404).json({ message: 'Part not found' });
     }
