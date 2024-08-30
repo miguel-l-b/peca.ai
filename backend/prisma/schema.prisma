@@ -84,7 +84,6 @@ model Vehicle {
   vehicleType   vehicleType   @relation(fields: [vehicleTypeId], references: [id])
   vehicleTypeId Int
   year          Int
-  fabricatedAt  DateTime
   imageUrl      String
   deleted       Boolean       @default(false)
   deletedAt     DateTime?
