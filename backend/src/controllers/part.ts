@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { PartCreateSchema, PartFilterSchema, PartFindByIdSchema, PartManagerVehicleSchema, PartUpdateSchema, TPartCreate, TPartFilter, TPartFindById, TPartManagerVehicle, TPartUpdate } from "../entities/part";
+import { PrismaClient } from '@prisma/client';
+import { PartCreateSchema, PartFilterSchema, PartFindByIdSchema, PartManagerVehicleSchema, PartUpdateSchema, TPartCreate, TPartFilter, TPartFindById, TPartManagerVehicle, TPartUpdate } from 'entities';
 
 const db = new PrismaClient();
 

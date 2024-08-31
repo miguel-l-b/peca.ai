@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { TCountry } from "../entities/country";
+import { PrismaClient } from '@prisma/client';
+import { TCountry } from 'entities';
 
 const db = new PrismaClient();
 

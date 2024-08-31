@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { VehicleCreateSchema, VehicleFilterSchema, VehicleFindByIdSchema, VehicleSchema, VehicleUpdateSchema } from '../entities/vehicle';
+import { VehicleCreateSchema, VehicleFilterSchema, VehicleFindByIdSchema, VehicleUpdateSchema } from 'entities';
 import VehicleController from '../controllers/vehicle';
 import BigIntHelper from '../helpers/bigint';
 

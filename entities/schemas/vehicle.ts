@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import FilterSchema from './filter';
+import { BrandSchema } from 'entities';
 
 export const VehicleSchema = z.object({
     id: z.number().positive(),
@@ -7,6 +8,7 @@ export const VehicleSchema = z.object({
     year: z.number(),
     vehicleType: z.string(),
     brandId: z.number().positive(),
+    brand: BrandSchema.optional(),
     imageUrl: z.string().url(),
 });
 

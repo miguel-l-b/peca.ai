@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import { BrandCreateSchema, BrandFilterSchema, BrandFindByIdSchema, BrandUpdateSchema, TBrand, TBrandCreate, TBrandFilter, TBrandFindById, TBrandUpdate } from "../entities/brand";
-import CountryController from "./country";
+import { PrismaClient } from '@prisma/client';
+import { BrandCreateSchema, BrandFilterSchema, BrandFindByIdSchema, BrandUpdateSchema, TBrand, TBrandCreate, TBrandFilter, TBrandFindById, TBrandUpdate } from 'entities';
+import CountryController from './country';
 
 const db = new PrismaClient();
 

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import BrandController from '../controllers/brand';
-import { BrandCreateSchema, BrandFilterSchema, BrandFindByIdSchema, BrandSchema, BrandUpdateSchema } from '../entities/brand';
+import { BrandCreateSchema, BrandFilterSchema, BrandFindByIdSchema, BrandUpdateSchema } from 'entities';
 
 const brandRouter = Router();
 

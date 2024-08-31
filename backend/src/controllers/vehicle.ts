@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { TVehicleCreate, TVehicleFilter, TVehicleFindById, TVehicleSort, TVehicleUpdate, VehicleCreateSchema, VehicleFilterSchema, VehicleFindByIdSchema, VehicleUpdateSchema } from "../entities/vehicle";
+import { PrismaClient } from '@prisma/client';
+import { TVehicleCreate, TVehicleFilter, TVehicleFindById, TVehicleUpdate, VehicleCreateSchema, VehicleFilterSchema, VehicleFindByIdSchema, VehicleUpdateSchema } from 'entities';
 
 const db = new PrismaClient();
 

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import FilterSchema from './filter';
+import { BrandSchema } from 'entities';
 
 export const PartSchema = z.object({
     id: z.number().positive(),
@@ -8,6 +9,7 @@ export const PartSchema = z.object({
     price: z.number().positive(),
     stock: z.number().optional(),
     brandId: z.number().positive(),
+    brand: BrandSchema.optional(),
     imageUrl: z.string().url(),
 });
 export type TPart = z.infer<typeof PartSchema>;
