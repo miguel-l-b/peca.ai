@@ -1,0 +1,19 @@
+<main class="flex flex-col gap-10 px-20 py-10 text-center">
+  <Section>
+    <h1>Teste técnico para peça.ai</h1>
+    <br>
+    <ul>
+      <li>
+        <strong>desafio:</strong> criar um CRUD de peças e veículos
+      </li>
+      <li>
+        <strong>tecnologias:</strong> Angular 18, TailwindCSS, Express, SQLite
+    </ul>
+  </Section>
+  <Section class="flex flex-col items-center gap-10">
+    <h1>Componentes</h1>
+    <component-brand [name]="exempleVehicle.brand.name" [foundedAt]="exempleVehicle.brand.foundedAt" [imageUrl]="exempleVehicle.brand.imageUrl" />
+    <component-vehicle [id]="exempleVehicle.id" [name]="exempleVehicle.name" [imageUrl]="exempleVehicle.imageUrl" [year]="exempleVehicle.year" [brand]="exempleVehicle.brand" />
+    <component-part [name]="exemplePart.name" [imageUrl]="exemplePart.imageUrl" [price]="exemplePart.price" [stock]="exemplePart.stock" [brand]="exemplePart.brand" [id]="exemplePart.id" />
+  </Section>
+</main>
