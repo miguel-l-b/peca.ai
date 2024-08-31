@@ -1,9 +1,45 @@
 import { PrismaClient } from "@prisma/client";
-import { PartCreateSchema, PartFilterSchema, PartFindByIdSchema, PartSortSchema, PartUpdateSchema, TPartCreate, TPartFilter, TPartFindById, TPartSort, TPartUpdate } from "../entities/part";
+import { PartCreateSchema, PartFilterSchema, PartFindByIdSchema, PartManagerVehicleSchema, PartUpdateSchema, TPartCreate, TPartFilter, TPartFindById, TPartManagerVehicle, TPartUpdate } from "../entities/part";
 
 const db = new PrismaClient();
 
 export default class PartController {
+    public static async removeVehicleFromPart(vehicleRemove: TPartManagerVehicle) {
+        if (!PartManagerVehicleSchema.safeParse(vehicleRemove).success)
+            return null;
+
+
+        if ((await db.partVehicle.findMany({ where: { partId: vehicleRemove.id, vehicleId: vehicleRemove.vehicleId, deleted: false } })).length === 0)
+            return null;
+
+        return await db.partVehicle.updateMany({ where: { partId: vehicleRemove.id, vehicleId: vehicleRemove.vehicleId }, data: { deleted: true, deletedAt: new Date() } })
+            .then(() => true)
+            .catch(() => false);
+    }
+
+    public static async addVehicleToPart(vehicleAdd: TPartManagerVehicle) {
+        if (!PartManagerVehicleSchema.safeParse(vehicleAdd).success)
+            return null;
+
+        if ((await db.partVehicle.findMany({ where: { partId: vehicleAdd.id, vehicleId: vehicleAdd.vehicleId, deleted: false } })).length > 0)
+            return null;
+
+        if (await db.part.findUnique({ where: { id: vehicleAdd.id, deleted: false } }) === null)
+            return null;
+
+        if (await db.vehicle.findUnique({ where: { id: vehicleAdd.vehicleId, deleted: false } }) === null)
+            return null;
+
+        return await db.partVehicle.create({
+            data: {
+                partId: vehicleAdd.id,
+                vehicleId: vehicleAdd.vehicleId
+            }
+        })
+            .then(() => true)
+            .catch(() => false);
+    }
+
     public static async createPart(part: TPartCreate): Promise<boolean> {
         if (!PartCreateSchema.safeParse(part).success)
             return false;
@@ -39,7 +75,18 @@ export default class PartController {
         if (!part || part.deleted)
             return null;
 
-        return await db.vehicle.findMany({ where: { PartVehicle: { every: { partId: PartId.id, AND: { vehicle: { deleted: false } } } } } });
+        return await db.partVehicle.findMany({
+            where: { partId: PartId.id, vehicle: { deleted: false }, deleted: false },
+            select: {
+                vehicle: {
+                    include: {
+                        brand: {
+                            include: { country: true }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public static async getParts(settings: TPartFilter) {
@@ -50,8 +97,8 @@ export default class PartController {
             include: { brand: true },
             where: { deleted: false },
             orderBy: { [settings.sort.field]: settings.sort.order },
-            skip: settings.skip,
-            take: settings.offset
+            skip: settings.page * settings.limit - settings.limit,
+            take: settings.limit
         });
     }
 

@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { TVehicleCreate, TVehicleFilter, TVehicleFindById, TVehicleSort, TVehicleUpdate, VehicleCreateSchema, VehicleUpdateSchema } from "../entities/vehicle";
+import { TVehicleCreate, TVehicleFilter, TVehicleFindById, TVehicleSort, TVehicleUpdate, VehicleCreateSchema, VehicleFilterSchema, VehicleFindByIdSchema, VehicleUpdateSchema } from "../entities/vehicle";
 
 const db = new PrismaClient();
 
@@ -69,25 +69,39 @@ export default class VehicleController {
     }
 
     public static async getVehicles(settings: TVehicleFilter) {
-        if (!VehicleCreateSchema.safeParse(settings).success)
+        if (!VehicleFilterSchema.safeParse(settings).success)
             return null;
 
         return await db.vehicle.findMany({
             include: { brand: true, vehicleType: true },
             orderBy: { [settings.sort.field]: settings.sort.order },
-            skip: settings.skip,
-            take: settings.offset
+            skip: settings.page * settings.limit - settings.limit,
+            take: settings.limit
         });
     }
 
     public static async getPartsByVehicleId(vehicleId: TVehicleFindById) {
-        if (!VehicleCreateSchema.safeParse(vehicleId).success)
+        if (!VehicleFindByIdSchema.safeParse(vehicleId).success)
             return null;
+
 
         if (await db.vehicle.findFirst({ where: { id: vehicleId.id, deleted: false } }) === null)
             return null;
 
-        return await db.part.findMany({ where: { PartVehicle: { every: { vehicleId: vehicleId.id, AND: { part: { deleted: false } } } } } });
+        return await db.partVehicle.findMany({
+            where: { vehicleId: vehicleId.id, part: { deleted: false }, deleted: false },
+            select: {
+                part: {
+                    include: {
+                        brand: {
+                            include: {
+                                country: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public static async updateVehicle(vehicle: TVehicleUpdate): Promise<boolean> {

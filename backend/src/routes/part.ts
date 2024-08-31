@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import PartController from '../controllers/part';
-import { PartCreateSchema, PartFilterSchema, PartFindByIdSchema, PartUpdateSchema } from '../entities/part';
-import BigIntHelper from '../helpers/bigint';
+import { PartCreateSchema, PartFilterSchema, PartFindByIdSchema, PartManagerVehicleSchema, PartUpdateSchema } from '../entities/part';
 
 const partRouter = Router();
 
@@ -18,12 +17,12 @@ partRouter.post('/create', async (req, res) => {
 });
 
 partRouter.get('/find', async (req, res) => {
-    const { sort, order, skip, offset } = req.query;
+    const { sort, order, page, limit } = req.query;
 
-    const reqObject = PartFilterSchema.safeParse({ sort: { field: sort, order }, skip, offset });
+    const reqObject = PartFilterSchema.safeParse({ sort: { field: sort, order }, page, limit });
     if (reqObject.success) {
         const parts = await PartController.getParts(reqObject.data);
-        return res.json(parts?.map(BigIntHelper.convertBigIntToString));
+        return res.json(parts);
     }
 
     return res.status(400).json({ message: 'Invalid data' });
@@ -34,7 +33,7 @@ partRouter.get('/find/:id', async (req, res) => {
     if (reqObject.success) {
         const part = await PartController.getPartById(reqObject.data);
         if (part)
-            return res.json(BigIntHelper.convertBigIntToString(part));
+            return res.json(part);
 
         return res.status(404).json({ message: 'Part not found' });
     }
@@ -47,7 +46,33 @@ partRouter.get('/:id/vehicles', async (req, res) => {
     if (reqObject.success) {
         const part = await PartController.getVehiclesById(reqObject.data);
         if (part)
-            return res.json(part.map(BigIntHelper.convertBigIntToString));
+            return res.json(part);
+
+        return res.status(404).json({ message: 'Part not found' });
+    }
+
+    return res.status(400).json({ message: 'Invalid data' });
+});
+
+partRouter.put("/:id/vehicles/add/:vehicleId", async (req, res) => {
+    const reqObject = PartManagerVehicleSchema.safeParse(req.params);
+    if (reqObject.success) {
+        const part = await PartController.addVehicleToPart(reqObject.data);
+        if (part)
+            return res.json(part);
+
+        return res.status(404).json({ message: 'Part not found' });
+    }
+
+    return res.status(400).json({ message: 'Invalid data' });
+});
+
+partRouter.put("/:id/vehicles/remove/:vehicleId", async (req, res) => {
+    const reqObject = PartManagerVehicleSchema.safeParse(req.params);
+    if (reqObject.success) {
+        const part = await PartController.removeVehicleFromPart(reqObject.data);
+        if (part)
+            return res.json(part);
 
         return res.status(404).json({ message: 'Part not found' });
     }

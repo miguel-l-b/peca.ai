@@ -35,3 +35,9 @@ export type TPartSort = z.infer<typeof PartSortSchema>;
 
 export const PartFilterSchema = z.object({ sort: PartSortSchema }).and(FilterSchema);
 export type TPartFilter = z.infer<typeof PartFilterSchema>;
+
+export const PartManagerVehicleSchema = z.object({
+    id: z.number().int().or(z.string().transform((val) => parseInt(val))),
+    vehicleId: z.number().int().or(z.string().transform((val) => parseInt(val)))
+});
+export type TPartManagerVehicle = z.infer<typeof PartManagerVehicleSchema>;
