@@ -19,10 +19,9 @@ vehicleRouter.post('/create', async (req, res) => {
 });
 
 vehicleRouter.get('/find', async (req, res) => {
-    const { sort, order, skip, offset } = req.query;
+    const { sort, order, page, limit } = req.query;
 
-    const reqObject = VehicleFilterSchema.safeParse({ sort: { field: sort, order }, skip, offset });
-
+    const reqObject = VehicleFilterSchema.safeParse({ sort: { field: sort, order }, page, limit });
     if (reqObject.success) {
         const vehicles = await VehicleController.getVehicles(reqObject.data);
         return res.json(vehicles?.map(BigIntHelper.convertBigIntToString));

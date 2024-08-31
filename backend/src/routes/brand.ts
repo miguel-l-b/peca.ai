@@ -7,7 +7,7 @@ const brandRouter = Router();
 brandRouter.post('/create', async (req, res) => {
     const reqObject = BrandCreateSchema.safeParse(req.body);
     if (reqObject.success) {
-        if (await BrandController.createBrand(reqObject.data))
+        if (await BrandController.createBrand(req.body))
             return res.json({ message: 'Brand created' });
 
         return res.status(500).json({ message: 'Error creating brand' });
@@ -18,9 +18,9 @@ brandRouter.post('/create', async (req, res) => {
 );
 
 brandRouter.get('/find', async (req, res) => {
-    const { sort, order, skip, offset } = req.query;
+    const { sort, order, page, limit } = req.query;
 
-    const reqObject = BrandFilterSchema.safeParse({ sort: { field: sort, order }, skip, offset });
+    const reqObject = BrandFilterSchema.safeParse({ sort: { field: sort, order }, page, limit });
     if (reqObject.success) {
         const brands = await BrandController.getBrands(reqObject.data);
         if (brands === null)

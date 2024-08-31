@@ -36,16 +36,16 @@ export default class BrandController {
         return await db.brand.findUnique({ where: { id: BrandId.id, deleted: false }, include: { Vehicle: true, Part: true, country: true } });
     }
 
-    public static async getBrands(filter: TBrandFilter) {
-        if (!BrandFilterSchema.safeParse(filter).success)
+    public static async getBrands(settings: TBrandFilter) {
+        if (!BrandFilterSchema.safeParse(settings).success)
             return null;
 
         return await db.brand.findMany({
             where: { deleted: false, country: { deleted: false } },
             include: { country: true },
-            orderBy: { [filter.sort.field]: filter.sort.order },
-            skip: filter.skip,
-            take: filter.offset
+            orderBy: { [settings.sort.field]: settings.sort.order },
+            skip: settings.page * settings.limit - settings.limit,
+            take: settings.limit
         });
     }
 
