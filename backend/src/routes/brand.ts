@@ -7,7 +7,7 @@ const brandRouter = Router();
 brandRouter.post('/create', async (req, res) => {
     const reqObject = BrandCreateSchema.safeParse(req.body);
     if (reqObject.success) {
-        if (await BrandController.createBrand(req.body))
+        if (await BrandController.createBrand(reqObject.data))
             return res.json({ message: 'Brand created' });
 
         return res.status(500).json({ message: 'Error creating brand' });

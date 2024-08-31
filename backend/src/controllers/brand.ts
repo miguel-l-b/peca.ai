@@ -9,6 +9,7 @@ export default class BrandController {
         if (!BrandCreateSchema.safeParse(brand).success)
             return false;
 
+
         const brandExists = await db.brand.findFirst({ where: { name: brand.name, deleted: false } });
         if (brandExists)
             return false;
@@ -16,6 +17,9 @@ export default class BrandController {
         const countryId = await CountryController.getCountryOrCreate(brand.country);
         if (!countryId)
             return false;
+
+        console.log(countryId);
+        console.log(brand);
 
         return await db.brand.create({
             data: {
