@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { BrandComponent } from "../brand/brand.component";
 import { Router, RouterModule } from '@angular/router';
+import { TBrand, TPart } from 'entities';
 
 @Component({
   selector: 'component-part',
@@ -10,15 +11,10 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './part.component.css'
 })
 export class PartComponent {
-  @Input() id!: number;
-  @Input() imageUrl!: string;
-  @Input() name!: string;
-  @Input() price!: number;
-  @Input() stock!: number;
-  @Input() brand!: { name: string, foundedAt: Date, imageUrl: string };
+  @Input() part!: TPart;
   constructor(private router: Router) { }
 
   goToPart() {
-    this.router.navigate(['/part', this.id]);
+    this.router.navigate(['/part', this.part.id]);
   }
 }

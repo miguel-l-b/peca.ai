@@ -1,4 +1,4 @@
-<main class="flex flex-col gap-10 px-20 py-10 text-center">
+<main class="main gap-10">
   <Section>
     <h1>Teste técnico para peça.ai</h1>
     <br>
@@ -12,8 +12,8 @@
   </Section>
   <Section class="flex flex-col items-center gap-10">
     <h1>Componentes</h1>
-    <component-brand [name]="exempleVehicle.brand.name" [foundedAt]="exempleVehicle.brand.foundedAt" [imageUrl]="exempleVehicle.brand.imageUrl" />
-    <component-vehicle [id]="exempleVehicle.id" [name]="exempleVehicle.name" [imageUrl]="exempleVehicle.imageUrl" [year]="exempleVehicle.year" [brand]="exempleVehicle.brand" />
-    <component-part [name]="exemplePart.name" [imageUrl]="exemplePart.imageUrl" [price]="exemplePart.price" [stock]="exemplePart.stock" [brand]="exemplePart.brand" [id]="exemplePart.id" />
+    <component-brand [brand]="exempleVehicle.brand" />
+    <component-vehicle [vehicle]="exempleVehicle" />
+    <component-part [part]="exemplePart" />
   </Section>
 </main>

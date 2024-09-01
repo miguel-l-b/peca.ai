@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { BrandComponent } from "../brand/brand.component";
 import { Router, RouterModule } from '@angular/router';
+import { TVehicle } from 'entities';
 
 @Component({
   selector: 'component-vehicle',
@@ -10,14 +11,10 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './vehicle.component.css'
 })
 export class VehicleComponent {
-  @Input() id!: number;
-  @Input() imageUrl!: string;
-  @Input() name!: string;
-  @Input() year!: number;
-  @Input() brand!: { name: string; foundedAt: Date; imageUrl: string; }
+  @Input() vehicle!: TVehicle;
   constructor(private router: Router) { }
 
   goToVehicle() {
-    this.router.navigate(['/vehicle', this.id]);
+    this.router.navigate(['/vehicle', this.vehicle.id]);
   }
 }
