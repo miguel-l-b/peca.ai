@@ -10,7 +10,6 @@ const partRouter = Router();
 
 partRouter.post('/create', async (req, res) => {
     const reqObject = PartCreateSchema.safeParse(req.body);
-    console.log(reqObject.error);
     if (reqObject.success) {
         if (await PartController.createPart(reqObject.data))
             return res.status(201).json({ message: 'Part created' });
