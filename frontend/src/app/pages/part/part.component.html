@@ -1,17 +1,12 @@
 <main class="main">
   <header class="flex items-center justify-center py-16 gap-20">
     <component-part [part]="part" />
-    <form class="flex flex-col gap-2 text-center" [formGroup]="editPart">
-      <input type="text" class="input" placeholder="Nome" formGroupName="name">
-      <select formControlName="brandId" class="input">
-        @for (item of brands$ | async; track $index) {
-          <option [value]="item.id" class="bg-white text-black">{{ item.name }}</option>
-        }
-      </select>
-      <input type="number" class="input" placeholder="Ano" formGroupName="price">
-      <input type="number" class="input" placeholder="Ano" formGroupName="stock">
-      <input type="text" class="input" placeholder="Modelo" formGroupName="barcode">
-      <input type="url" class="input" placeholder="Imagem Url" formGroupName="imageUrl">
+    <form class="flex flex-col gap-2 text-center" [formGroup]="editPart()">
+      <input type="text" class="input" placeholder="Nome" formControlName="name">
+      <input type="number" class="input" placeholder="Ano" formControlName="price">
+      <input type="number" class="input" placeholder="Ano" formControlName="stock">
+      <input type="text" class="input" placeholder="Modelo" formControlName="barcode">
+      <input type="url" class="input" placeholder="Imagem Url" formControlName="imageUrl">
       <button class="bg-yellow-600 rounded-lg px-4 py-2 font-bold text-white hover:bg-yellow-100 hover:text-yellow-800 duration-150" (click)="updatePart(this.partId())">
         Editar
       </button>

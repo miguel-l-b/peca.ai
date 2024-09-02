@@ -59,10 +59,7 @@ export default class VehicleController {
             }
         })
             .then(() => true)
-            .catch((e) => {
-                console.log(e);
-                return false;
-            });
+            .catch((e) => false);
     }
 
     public static async getVehicleById(vehicleId: TVehicleFindById) {
@@ -99,8 +96,8 @@ export default class VehicleController {
             where: { deleted: false },
             include: { brand: true, vehicleType: true },
             orderBy: { [settings.sort.field]: settings.sort.order },
-            skip: settings.page * settings.per_page - settings.per_page,
-            take: settings.per_page
+            skip: (settings.page - 1) * settings.per_page,
+            take: settings.per_page,
         })
             .then(vehicles => {
                 const items = vehicles.map(v => {

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { TPart, TPartCreate, TPartFilter, TPartPopulate, TPartUpdate, TVehicle, TVehiclePopulate } from 'entities/types';
+import { TPart, TPartCreate, TPartFilter, TPartList, TPartPopulate, TPartUpdate, TVehicle, TVehiclePopulate } from 'entities/types';
 
 @Injectable({
   providedIn: 'root'
@@ -15,14 +15,15 @@ export class PartService {
   }
 
   getParts(filter?: TPartFilter) {
-    const params = new HttpParams();
+    let params = new HttpParams();
     if (filter) {
-      params.set('sort', filter.sort.field);
-      params.set('order', filter.sort.order);
-      params.set('page', filter.page);
-      params.set('per_page', filter.per_page);
+      params = new HttpParams()
+        .set('sort', filter.sort.field)
+        .set('order', filter.sort.order)
+        .set('page', filter.page)
+        .set('per_page', filter.per_page);
     }
-    return this.http.get<TPartPopulate[]>(`${this.baseUrl}/find`, { params });
+    return this.http.get<TPartList>(`${this.baseUrl}/find`, { params });
   }
 
   getPartById(id: number) {

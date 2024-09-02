@@ -17,14 +17,13 @@ import { CommonModule } from '@angular/common';
   styleUrl: './part.component.css'
 })
 export class PartPageComponent {
-  editPart = new FormGroup({
+  editPart = signal(new FormGroup({
     name: new FormControl('', [Validators.required]),
     barcode: new FormControl('', [Validators.required]),
     price: new FormControl<number | null>(null, [Validators.required, Validators.min(1)]),
     stock: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
-    brandId: new FormControl(1, [Validators.required]),
     imageUrl: new FormControl('', [Validators.required]),
-  });
+  }));
   partId = signal<number>(0);
   part!: TPartPopulate;
   vehicles$ = new Observable<TVehiclePopulate[]>();
@@ -45,25 +44,22 @@ export class PartPageComponent {
       this.getPart(partId);
       this.getVehicles(partId);
     }).unsubscribe();
-    this.getBrands();
-  }
-
-  getBrands() {
-    this.brands$ = this.brandService.getBrands();
   }
 
   getPart(partId: number) {
     this.partService.getPartById(partId).subscribe(
       (part) => {
-        this.editPart.setValue({
+        this.editPart().setValue({
           name: part.name,
           barcode: part.barcode,
           price: part.price,
           stock: part.stock ?? 0,
-          brandId: part.brandId,
           imageUrl: part.imageUrl,
         });
         this.part = part;
+      },
+      (error) => {
+        this.router.navigate(['/parts']);
       }
     );
   }
@@ -83,11 +79,11 @@ export class PartPageComponent {
   updatePart(partId: number) {
     this.partService.updatePart({
       id: partId,
-      name: this.editPart.value.name ?? undefined,
-      barcode: this.editPart.value.barcode ?? undefined,
-      price: this.editPart.value.price ?? undefined,
-      imageUrl: this.editPart.value.imageUrl ?? undefined,
-      stock: this.editPart.value.stock ?? undefined,
+      name: this.editPart().value.name ?? undefined,
+      barcode: this.editPart().value.barcode ?? undefined,
+      price: this.editPart().value.price ?? undefined,
+      imageUrl: this.editPart().value.imageUrl ?? undefined,
+      stock: this.editPart().value.stock ?? undefined,
     }).subscribe(
       () => {
         this.getPart(partId);

@@ -100,13 +100,29 @@ export default class PartController {
         if (!PartFilterSchema.safeParse(settings).success)
             return null;
 
+        const count = await db.part.findMany({
+            where: { deleted: false },
+            select: { id: true },
+        })
+            .then(parts => {
+                return parts.length;
+            })
+            .catch(() => 0);
+
         return await db.part.findMany({
             include: { brand: true },
             where: { deleted: false },
             orderBy: { [settings.sort.field]: settings.sort.order },
-            skip: settings.page * settings.per_page - settings.per_page,
+            skip: (settings.page - 1) * settings.per_page,
             take: settings.per_page
-        });
+        })
+            .then(parts => {
+                return {
+                    items: parts,
+                    total: count,
+                    pages: Math.ceil(count / settings.per_page),
+                }
+            });
     }
 
     public static async updatePart(part: TPartUpdate): Promise<boolean> {
@@ -118,6 +134,7 @@ export default class PartController {
             data: {
                 name: part.name,
                 barcode: part.barcode,
+                stock: part.stock,
                 price: part.price,
                 imageUrl: part.imageUrl,
             }

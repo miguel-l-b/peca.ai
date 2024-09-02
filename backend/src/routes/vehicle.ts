@@ -23,9 +23,8 @@ vehicleRouter.post('/create', async (req, res) => {
 });
 
 vehicleRouter.get('/find', async (req, res) => {
-    const { sort, order, page, limit } = req.query;
-
-    const reqObject = VehicleFilterSchema.safeParse({ sort: { field: sort, order }, page, limit });
+    const { sort, order, page, per_page } = req.query;
+    const reqObject = VehicleFilterSchema.safeParse({ sort: { field: sort, order }, page, per_page });
     if (reqObject.success) {
         const vehicles = await VehicleController.getVehicles(reqObject.data);
         return res.json(vehicles);
@@ -61,8 +60,6 @@ vehicleRouter.get('/:id/parts', async (req, res) => {
 
 vehicleRouter.put('/update/:id', async (req, res) => {
     const reqObject = VehicleUpdateSchema.safeParse({ ...req.body, id: parseInt(req.params.id) });
-    console.log(reqObject.error);
-    console.log(reqObject.data);
 
     if (reqObject.success) {
         if (await VehicleController.updateVehicle(reqObject.data))

@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { BrandService } from '../../services/brand.service';
-import { TBrand, TVehicleFilter, TVehicleList, TVehiclePopulate } from 'entities/types';
+import { TBrand, TVehicleList } from 'entities/types';
 import { VehicleService } from '../../services/vehicle.service';
 import { VehicleComponent } from "../../components/vehicle/vehicle.component";
 import { Observable } from 'rxjs';
@@ -21,7 +21,7 @@ export class VehiclesComponent {
   newVehicle = signal<FormGroup>(
     new FormGroup({
       name: new FormControl('', [Validators.required]),
-      brandId: new FormControl(1, [Validators.required]),
+      brandId: new FormControl('1', [Validators.required]),
       year: new FormControl(null, [Validators.required, Validators.min(1900), Validators.max(2025)]),
       vehicleType: new FormControl('', [Validators.required]),
       imageUrl: new FormControl('', [Validators.required]),
@@ -41,7 +41,10 @@ export class VehiclesComponent {
     if (this.newVehicle().invalid) return;
 
     this.vehicleService.createVehicle({
-      ...this.newVehicle().value,
+      name: this.newVehicle().value.name,
+      year: this.newVehicle().value.year,
+      vehicleType: this.newVehicle().value.vehicleType,
+      imageUrl: this.newVehicle().value.imageUrl,
       brandId: parseInt(this.newVehicle().value.brandId),
     }).subscribe(
       () => {
@@ -70,7 +73,14 @@ export class VehiclesComponent {
   }
 
   getVehicles() {
-    this.vehicleService.getVehicles().subscribe((data) => {
+    this.vehicleService.getVehicles({
+      page: this.page(),
+      per_page: 6,
+      sort: {
+        field: 'name',
+        order: 'asc'
+      }
+    }).subscribe((data) => {
       this.vehicles.set(data);
     });
   }

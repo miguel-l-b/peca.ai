@@ -10,6 +10,7 @@ const partRouter = Router();
 
 partRouter.post('/create', async (req, res) => {
     const reqObject = PartCreateSchema.safeParse(req.body);
+    console.log(reqObject.error);
     if (reqObject.success) {
         if (await PartController.createPart(reqObject.data))
             return res.status(201).json({ message: 'Part created' });
@@ -21,9 +22,9 @@ partRouter.post('/create', async (req, res) => {
 });
 
 partRouter.get('/find', async (req, res) => {
-    const { sort, order, page, limit } = req.query;
+    const { sort, order, page, per_page } = req.query;
 
-    const reqObject = PartFilterSchema.safeParse({ sort: { field: sort, order }, page, limit });
+    const reqObject = PartFilterSchema.safeParse({ sort: { field: sort, order }, page, per_page });
     if (reqObject.success) {
         const parts = await PartController.getParts(reqObject.data);
         return res.json(parts);

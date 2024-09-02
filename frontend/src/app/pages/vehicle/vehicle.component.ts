@@ -18,15 +18,14 @@ import { VehicleComponent } from "../../components/vehicle/vehicle.component";
   styleUrl: './vehicle.component.css'
 })
 export class VehiclePageComponent {
-  editVehicle = new FormGroup({
+  editVehicle = signal(new FormGroup({
     name: new FormControl('', [Validators.required]),
-    brandId: new FormControl(1, [Validators.required]),
     year: new FormControl<number | null>(null, [Validators.required, Validators.min(1900), Validators.max(2025)]),
     vehicleType: new FormControl('', [Validators.required]),
     imageUrl: new FormControl('', [Validators.required]),
-  });
+  }));
   vehicleId = signal<number>(0);
-  vehicle!: TVehiclePopulate;
+  vehicle!: TVehiclePopulate
   parts$ = new Observable<TPartPopulate[]>();
   brands$ = new Observable<TBrand[]>();
 
@@ -45,19 +44,13 @@ export class VehiclePageComponent {
       this.getVehicle(vehicleId);
       this.getParts(vehicleId);
     }).unsubscribe();
-    this.getBrands();
-  }
-
-  getBrands() {
-    this.brands$ = this.brandService.getBrands();
   }
 
   getVehicle(vehicleId: number) {
     this.vehicleService.getVehicleById(vehicleId).subscribe(
       (vehicle) => {
-        this.editVehicle.setValue({
+        this.editVehicle().setValue({
           name: vehicle.name,
-          brandId: vehicle.brandId,
           year: vehicle.year,
           vehicleType: vehicle.vehicleType,
           imageUrl: vehicle.imageUrl
@@ -77,9 +70,9 @@ export class VehiclePageComponent {
   updateVehicle() {
     this.vehicleService.updateVehicle({
       id: this.vehicleId(),
-      name: this.editVehicle.value.name ?? undefined,
-      imageUrl: this.editVehicle.value.imageUrl ?? undefined,
-      year: this.editVehicle.value.year ?? undefined,
+      name: this.editVehicle().value.name ?? undefined,
+      imageUrl: this.editVehicle().value.imageUrl ?? undefined,
+      year: this.editVehicle().value.year ?? undefined,
     })
       .subscribe(
         () => {

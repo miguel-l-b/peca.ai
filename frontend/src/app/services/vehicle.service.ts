@@ -10,14 +10,15 @@ export class VehicleService {
   constructor(private http: HttpClient) { }
 
   getVehicles(filter?: TVehicleFilter) {
-    const params = new HttpParams();
+    let params = new HttpParams();
     if (filter) {
-      params.set('sort', filter.sort.field);
-      params.set('order', filter.sort.order);
-      params.set('per_page', filter.per_page);
-      params.set('page', filter.page);
+      params = new HttpParams()
+        .set('sort', filter.sort.field)
+        .set('order', filter.sort.order)
+        .set('per_page', filter.per_page)
+        .set('page', filter.page);
     }
-    return this.http.get<TVehicleList>(`${this.baseUrl}/find`, { params });
+    return this.http.get<TVehicleList>(`${this.baseUrl}/find`, { params: params });
   }
 
   createVehicle(vehicle: TVehicleCreate) {

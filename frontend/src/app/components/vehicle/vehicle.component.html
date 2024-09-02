@@ -1,8 +1,8 @@
 <div (click)="goToVehicle()" class="flex flex-col bg-gray-700 p-8 rounded-3xl w-96 gap-5">
-  <img [src]="vehicle.imageUrl" [alt]="vehicle.name" class="rounded-3xl cursor-pointer w-full h-44 object-cover">
+  <img [src]="vehicle.imageUrl!" [alt]="vehicle.name" class="rounded-3xl cursor-pointer w-full h-44 object-cover">
   <div class="flex flex-col gap-4 bg-gray-600 rounded-3xl py-3">
     <h1>{{ vehicle.name }} - {{ vehicle.year }}</h1>
-    <component-brand [brand]="vehicle.brand!" ></component-brand>
+    <component-brand [brand]="vehicle.brand!" />
     <a [routerLink]="['/vehicle', vehicle.id]" class="text-blue-500 text-center rounded-3xl py-2">Ver detalhes</a>
   </div>
 </div>

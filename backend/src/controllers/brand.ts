@@ -24,9 +24,6 @@ export default class BrandController {
         if (!countryId)
             return false;
 
-        console.log(countryId);
-        console.log(brand);
-
         return await db.brand.create({
             data: {
                 name: brand.name,

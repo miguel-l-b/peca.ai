@@ -13,3 +13,8 @@ export type TPartSort = z.infer<typeof PartSortSchema>;
 export type TPartFilter = z.infer<typeof PartFilterSchema>;
 export type TPartManagerVehicle = z.infer<typeof PartManagerVehicleSchema>;
 export type TPartPopulate = TPart & { brand?: TBrand }
+export type TPartList = {
+    items: TPartPopulate[];
+    total: number;
+    pages: number;
+}
