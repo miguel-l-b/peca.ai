@@ -1,18 +1,20 @@
 {
   "name": "entities",
   "version": "1.0.0",
-  "main": "index.ts",
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*/index.js"
+  },
   "scripts": {
-    "build": "tsc --outDir ./dist"
+    "build": "tsc --declaration"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
   },
   "dependencies": {
     "entities": "file:",
     "zod": "^3.23.8"
-  },
-  "devDependencies": {
-    "typescript": "^5.5.4"
   }
 }
