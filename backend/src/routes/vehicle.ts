@@ -1,7 +1,11 @@
 import { Router } from 'express';
-import { VehicleCreateSchema, VehicleFilterSchema, VehicleFindByIdSchema, VehicleUpdateSchema } from 'entities';
-import VehicleController from '../controllers/vehicle';
+
 import BigIntHelper from '../helpers/bigint';
+import VehicleController from '../controllers/vehicle';
+import {
+    VehicleCreateSchema, VehicleFilterSchema, VehicleFindByIdSchema,
+    VehicleUpdateSchema
+} from 'entities';
 
 const vehicleRouter = Router();
 
@@ -24,7 +28,7 @@ vehicleRouter.get('/find', async (req, res) => {
     const reqObject = VehicleFilterSchema.safeParse({ sort: { field: sort, order }, page, limit });
     if (reqObject.success) {
         const vehicles = await VehicleController.getVehicles(reqObject.data);
-        return res.json(vehicles?.map(BigIntHelper.convertBigIntToString));
+        return res.json(vehicles);
     }
 
     return res.status(400).json({ message: 'Invalid data' });
@@ -36,7 +40,7 @@ vehicleRouter.get('/find/:id', async (req, res) => {
     if (reqObject.success) {
         const vehicle = await VehicleController.getVehicleById(reqObject.data);
         if (vehicle)
-            return res.json(BigIntHelper.convertBigIntToString(vehicle));
+            return res.json(vehicle);
 
         return res.status(404).json({ message: 'Vehicle not found' });
     }
@@ -56,7 +60,9 @@ vehicleRouter.get('/:id/parts', async (req, res) => {
 });
 
 vehicleRouter.put('/update/:id', async (req, res) => {
-    const reqObject = VehicleUpdateSchema.safeParse({ ...req.body, id: req.params.id });
+    const reqObject = VehicleUpdateSchema.safeParse({ ...req.body, id: parseInt(req.params.id) });
+    console.log(reqObject.error);
+    console.log(reqObject.data);
 
     if (reqObject.success) {
         if (await VehicleController.updateVehicle(reqObject.data))

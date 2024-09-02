@@ -1,4 +1,6 @@
 import express from 'express';
+import cors from 'cors';
+
 import { LogMiddleware } from './middlewares/log';
 import brandRouter from './routes/brand';
 import vehicleRouter from './routes/vehicle';
@@ -7,6 +9,7 @@ import partRouter from './routes/part';
 const app = express();
 
 app.use(express.json());
+app.use(cors())
 
 app.use(LogMiddleware.handle);
 

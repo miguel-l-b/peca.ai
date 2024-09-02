@@ -1,5 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import { PartCreateSchema, PartFilterSchema, PartFindByIdSchema, PartManagerVehicleSchema, PartUpdateSchema, TPartCreate, TPartFilter, TPartFindById, TPartManagerVehicle, TPartUpdate } from 'entities';
+
+import {
+    PartCreateSchema, PartFilterSchema, PartFindByIdSchema,
+    PartManagerVehicleSchema, PartUpdateSchema
+} from 'entities';
+import {
+    TPartCreate, TPartFilter, TPartFindById, TPartManagerVehicle, TPartUpdate
+} from 'entities';
 
 const db = new PrismaClient();
 
@@ -97,8 +104,8 @@ export default class PartController {
             include: { brand: true },
             where: { deleted: false },
             orderBy: { [settings.sort.field]: settings.sort.order },
-            skip: settings.page * settings.limit - settings.limit,
-            take: settings.limit
+            skip: settings.page * settings.per_page - settings.per_page,
+            take: settings.per_page
         });
     }
 

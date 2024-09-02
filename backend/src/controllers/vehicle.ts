@@ -1,5 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import { TVehicleCreate, TVehicleFilter, TVehicleFindById, TVehicleUpdate, VehicleCreateSchema, VehicleFilterSchema, VehicleFindByIdSchema, VehicleUpdateSchema } from 'entities';
+
+import {
+    VehicleCreateSchema, VehicleFilterSchema, VehicleFindByIdSchema,
+    VehicleUpdateSchema
+} from 'entities';
+import {
+    TVehicleCreate, TVehicleFilter, TVehicleFindById, TVehicleUpdate
+} from 'entities';
 
 const db = new PrismaClient();
 
@@ -59,25 +66,56 @@ export default class VehicleController {
     }
 
     public static async getVehicleById(vehicleId: TVehicleFindById) {
-        if (!VehicleCreateSchema.safeParse(vehicleId).success)
+        if (!VehicleFindByIdSchema.safeParse(vehicleId).success)
             return null;
 
         if (await db.vehicle.findFirst({ where: { id: vehicleId.id, deleted: false } }) === null)
             return null;
 
-        return await db.vehicle.findUnique({ where: { id: vehicleId.id }, include: { brand: true, vehicleType: true } });
+        return await db.vehicle.findUnique({ where: { id: vehicleId.id }, include: { brand: true, vehicleType: true } })
+            .then(v => {
+                const type = v?.vehicleType.name;
+                return {
+                    ...v,
+                    vehicleType: type
+                };
+            });
     }
 
     public static async getVehicles(settings: TVehicleFilter) {
         if (!VehicleFilterSchema.safeParse(settings).success)
             return null;
 
+        const count = await db.vehicle.findMany({
+            where: { deleted: false },
+            select: { id: true },
+        })
+            .then(vehicles => {
+                return vehicles.length;
+            })
+            .catch(() => 0);
+
         return await db.vehicle.findMany({
+            where: { deleted: false },
             include: { brand: true, vehicleType: true },
             orderBy: { [settings.sort.field]: settings.sort.order },
-            skip: settings.page * settings.limit - settings.limit,
-            take: settings.limit
-        });
+            skip: settings.page * settings.per_page - settings.per_page,
+            take: settings.per_page
+        })
+            .then(vehicles => {
+                const items = vehicles.map(v => {
+                    const type = v.vehicleType.name;
+                    return {
+                        ...v,
+                        vehicleType: type
+                    };
+                });
+                return {
+                    items,
+                    total: count,
+                    pages: Math.ceil(count / settings.per_page),
+                }
+            });
     }
 
     public static async getPartsByVehicleId(vehicleId: TVehicleFindById) {
@@ -88,19 +126,9 @@ export default class VehicleController {
         if (await db.vehicle.findFirst({ where: { id: vehicleId.id, deleted: false } }) === null)
             return null;
 
-        return await db.partVehicle.findMany({
-            where: { vehicleId: vehicleId.id, part: { deleted: false }, deleted: false },
-            select: {
-                part: {
-                    include: {
-                        brand: {
-                            include: {
-                                country: true
-                            }
-                        }
-                    }
-                }
-            }
+        return await db.part.findMany({
+            where: { PartVehicle: { some: { vehicleId: vehicleId.id } }, deleted: false },
+            include: { brand: true }
         });
     }
 
@@ -124,11 +152,11 @@ export default class VehicleController {
     }
 
     public static async deleteVehicle(vehicleId: TVehicleFindById): Promise<boolean> {
-        if (!VehicleCreateSchema.safeParse(vehicleId).success)
+        if (!VehicleFindByIdSchema.safeParse(vehicleId).success)
             return false;
 
         return await db.vehicle.update({ where: { id: vehicleId.id }, data: { deleted: true, deletedAt: new Date() } })
             .then(() => true)
-            .catch(() => false);
+            .catch((e) => false);
     }
 }

@@ -1,6 +1,10 @@
 import { Router } from 'express';
+
 import PartController from '../controllers/part';
-import { PartCreateSchema, PartFilterSchema, PartFindByIdSchema, PartManagerVehicleSchema, PartUpdateSchema } from 'entities';
+import {
+    PartCreateSchema, PartFilterSchema, PartFindByIdSchema,
+    PartManagerVehicleSchema, PartUpdateSchema
+} from 'entities';
 
 const partRouter = Router();
 

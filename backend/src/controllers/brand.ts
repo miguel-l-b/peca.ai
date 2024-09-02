@@ -1,6 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import { BrandCreateSchema, BrandFilterSchema, BrandFindByIdSchema, BrandUpdateSchema, TBrand, TBrandCreate, TBrandFilter, TBrandFindById, TBrandUpdate } from 'entities';
+
 import CountryController from './country';
+import {
+    BrandCreateSchema, BrandFilterSchema, BrandFindByIdSchema, BrandUpdateSchema
+} from 'entities';
+import {
+    TBrandCreate, TBrandFindById, TBrandFilter, TBrandUpdate
+} from 'entities';
 
 const db = new PrismaClient();
 
@@ -48,8 +54,8 @@ export default class BrandController {
             where: { deleted: false, country: { deleted: false } },
             include: { country: true },
             orderBy: { [settings.sort.field]: settings.sort.order },
-            skip: settings.page * settings.limit - settings.limit,
-            take: settings.limit
+            skip: settings.page * settings.per_page - settings.per_page,
+            take: settings.per_page
         });
     }
 

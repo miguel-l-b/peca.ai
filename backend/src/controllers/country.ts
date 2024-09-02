@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+
 import { TCountry } from 'entities';
 
 const db = new PrismaClient();
