@@ -1,5 +1,5 @@
-<div (click)="goToPart()" class="flex bg-gray-700 rounded-3xl">
-  <img class="rounded-l-3xl cursor-pointer" width="300" [src]="part.imageUrl" [alt]="part.name">
+<div (click)="goToPart()" class="flex bg-gray-700 rounded-3xl h-fit w-fit">
+  <img class="rounded-l-3xl cursor-pointer w-64 h-98 object-cover" [src]="part.imageUrl" [alt]="part.name">
   <div class="flex flex-col justify-between p-10">
     <header class="flex flex-col gap-5">
       <h1 class="text-2xl">{{ part.name }}</h1>
@@ -7,9 +7,9 @@
     </header>
     <p class="text-lg">
       <span class="text-xl">R$</span>
-      {{ part.price.toFixed(2) }}
+      {{ part.price }}
     </p>
-    <component-brand [brand]="part.brand" />
+    <component-brand [brand]="part.brand!" />
     <a [routerLink]="['/part', part.id]" class="text-blue-500 text-center rounded-3xl py-2">Ver detalhes</a>
   </div>
 </div>

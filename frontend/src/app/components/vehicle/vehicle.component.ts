@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { BrandComponent } from "../brand/brand.component";
 import { Router, RouterModule } from '@angular/router';
-import { TVehicle } from 'entities';
+import { TVehiclePopulate } from 'entities/types';
 
 @Component({
   selector: 'component-vehicle',
@@ -11,7 +11,7 @@ import { TVehicle } from 'entities';
   styleUrl: './vehicle.component.css'
 })
 export class VehicleComponent {
-  @Input() vehicle!: TVehicle;
+  @Input() vehicle!: TVehiclePopulate;
   constructor(private router: Router) { }
 
   goToVehicle() {

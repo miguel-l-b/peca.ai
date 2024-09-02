@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { TBrand } from 'entities';
+import { TBrand } from 'entities/types';
 @Component({
   selector: 'component-brand',
   standalone: true,
@@ -8,5 +8,5 @@ import { TBrand } from 'entities';
   styleUrl: './brand.component.css'
 })
 export class BrandComponent {
-  @Input() brand!: TBrand;
+  @Input() brand: TBrand | undefined;
 }

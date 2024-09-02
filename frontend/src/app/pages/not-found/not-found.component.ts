@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-not-found',
@@ -8,5 +9,11 @@ import { Component } from '@angular/core';
   styleUrl: './not-found.component.css'
 })
 export class NotFoundComponent {
-  pageUrl: string = window.location.pathname;
+  pageUrl!: string
+
+  constructor(private activatedRoute: ActivatedRoute) { }
+
+  ngOnInit() {
+    this.pageUrl = '/' + this.activatedRoute.snapshot.url.join('/');
+  }
 }

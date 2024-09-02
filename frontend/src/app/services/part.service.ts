@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { TPartCreate, TPartFilter } from 'entities';
+import { TPart, TPartCreate, TPartFilter, TPartPopulate, TPartUpdate, TVehicle, TVehiclePopulate } from 'entities/types';
 
 @Injectable({
   providedIn: 'root'
@@ -15,27 +15,29 @@ export class PartService {
   }
 
   getParts(filter?: TPartFilter) {
-    const params = new HttpParams()
-      .set('sort', filter?.sort.field || '')
-      .set('order', filter?.sort.order || '')
-      .set('page', filter?.page || '')
-      .set('limit', filter?.limit || '');
-    return this.http.get(`${this.baseUrl}/find`, { params });
+    const params = new HttpParams();
+    if (filter) {
+      params.set('sort', filter.sort.field);
+      params.set('order', filter.sort.order);
+      params.set('page', filter.page);
+      params.set('per_page', filter.per_page);
+    }
+    return this.http.get<TPartPopulate[]>(`${this.baseUrl}/find`, { params });
   }
 
-  getPartById(id: string) {
-    return this.http.get(`${this.baseUrl}/find/${id}`);
+  getPartById(id: number) {
+    return this.http.get<TPart>(`${this.baseUrl}/find/${id}`);
   }
 
-  getVehiclesByPartId(id: string) {
-    return this.http.get(`${this.baseUrl}/${id}/vehicles`);
+  getVehiclesByPartId(id: number) {
+    return this.http.get<TVehiclePopulate[]>(`${this.baseUrl}/${id}/vehicles`);
   }
 
-  updatePart(id: string, part: TPartCreate) {
-    return this.http.put(`${this.baseUrl}/update/${id}`, part);
+  updatePart(part: TPartUpdate) {
+    return this.http.put(`${this.baseUrl}/update/${part.id}`, part);
   }
 
-  deletePart(id: string) {
+  deletePart(id: number) {
     return this.http.delete(`${this.baseUrl}/delete/${id}`);
   }
 

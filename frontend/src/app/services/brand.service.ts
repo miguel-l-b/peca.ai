@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { TBrandCreate, TBrandUpdate } from 'entities';
+import { TBrand, TBrandCreate, TBrandUpdate } from 'entities/types';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,19 +11,7 @@ export class BrandService {
 
   constructor(private http: HttpClient) { }
 
-  createBrand(brand: TBrandCreate) {
-    return this.http.post(`${this.baseUrl}/create`, brand);
-  }
-
   getBrands() {
-    return this.http.get(`${this.baseUrl}/find`);
-  }
-
-  getBrandById(id: string) {
-    return this.http.get(`${this.baseUrl}/find/${id}`);
-  }
-
-  updateBrand(id: string, brand: TBrandUpdate) {
-    return this.http.put(`${this.baseUrl}/update/${id}`, brand);
+    return this.http.get<TBrand[]>(`${this.baseUrl}/find`);
   }
 }
