@@ -40,7 +40,7 @@ export default class BrandController {
         if (!BrandFindByIdSchema.safeParse(BrandId).success)
             return null;
 
-        return await db.brand.findUnique({ where: { id: BrandId.id, deleted: false }, include: { Vehicle: true, Part: true, country: true } });
+        return await db.brand.findUnique({ where: { id: BrandId.id, deleted: false }, include: { Vehicle: { where: { deleted: false } }, Part: { where: { deleted: false } }, country: true } });
     }
 
     public static async getBrands(settings: TBrandFilter) {

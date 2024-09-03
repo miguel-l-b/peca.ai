@@ -1,5 +1,5 @@
 <main class="main">
-  <form class="flex gap-10 items-center justify-center mb-20" [formGroup]="newVehicle()">
+  <form class="flex md:flex-col gap-10 items-center justify-center mb-20" [formGroup]="newVehicle()">
     <input type="text" class="input" placeholder="Nome do veículo" formControlName="name" />
     <input type="number" class="input" placeholder="Ano" formControlName="year" />
     <select formControlName="brandId" class="input">
@@ -9,7 +9,7 @@
     </select>
     <input type="text" class="input" placeholder="Tipo do veículo" formControlName="vehicleType" />
     <input type="url" class="input" placeholder="Link imagem" formControlName="imageUrl" />
-    <button class="px-4 py-2 bg-emerald-400 rounded-lg text-emerald-900 font-bold disabled:bg-green-100" [disabled]="newVehicle().invalid" (click)="createVehicle()">Criar veículo</button>
+    <button class="btn_create" [disabled]="newVehicle().invalid" (click)="createVehicle()">Criar veículo</button>
   </form>
   <section class="flex flex-col items-center gap-10">
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">

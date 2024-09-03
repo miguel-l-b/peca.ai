@@ -22,6 +22,18 @@ h3, h4, h5, h6 {
   @apply font-sans;
 }
 
+.btn_create {
+  @apply px-4 py-2 bg-emerald-400 rounded-lg text-emerald-900 font-bold disabled:bg-green-100;
+}
+
+.btn_update {
+  @apply bg-yellow-600 rounded-lg px-4 py-2 font-bold text-white hover:bg-yellow-100 hover:text-yellow-800 duration-150;
+}
+
+.btn_remove {
+  @apply bg-red-400 px-4 py-2 rounded-lg font-bold hover:bg-red-100 hover:text-red-800 duration-150;
+}
+
 .main {
   @apply flex flex-col px-20 py-10 text-center;
 }

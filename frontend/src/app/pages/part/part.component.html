@@ -7,11 +7,11 @@
       <input type="number" class="input" placeholder="Ano" formControlName="stock">
       <input type="text" class="input" placeholder="Modelo" formControlName="barcode">
       <input type="url" class="input" placeholder="Imagem Url" formControlName="imageUrl">
-      <button class="bg-yellow-600 rounded-lg px-4 py-2 font-bold text-white hover:bg-yellow-100 hover:text-yellow-800 duration-150" (click)="updatePart(this.partId())">
+      <button class="btn_update" (click)="updatePart(this.partId())">
         Editar
       </button>
       <button
-        class="bg-red-400 px-4 py-2 rounded-lg font-bold hover:bg-red-100 hover:text-red-800 duration-150"
+        class="btn_remove"
         (click)="deletePart(partId())">
         Deletar
       </button>
